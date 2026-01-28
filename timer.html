@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24H Nords Timer Bar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .timer-container {
+            width: 100%;
+            padding: 5px 10px;
+        }
+
+        .hour-markers {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .hour-marker {
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            width: 0;
+            text-align: center;
+        }
+
+        .hour-marker:first-child {
+            text-align: left;
+        }
+
+        .hour-marker:last-child {
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #444444;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f5c518, #ffd700);
+            width: 0%;
+            border-radius: 6px;
+            transition: width 1s linear;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .time-display {
+            text-align: center;
+            margin-top: 6px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <div class="hour-markers">
+            <span class="hour-marker">0</span>
+            <span class="hour-marker">1</span>
+            <span class="hour-marker">2</span>
+            <span class="hour-marker">3</span>
+            <span class="hour-marker">4</span>
+            <span class="hour-marker">5</span>
+            <span class="hour-marker">6</span>
+            <span class="hour-marker">7</span>
+            <span class="hour-marker">8</span>
+            <span class="hour-marker">9</span>
+            <span class="hour-marker">10</span>
+            <span class="hour-marker">11</span>
+            <span class="hour-marker">12</span>
+            <span class="hour-marker">13</span>
+            <span class="hour-marker">14</span>
+            <span class="hour-marker">15</span>
+            <span class="hour-marker">16</span>
+            <span class="hour-marker">17</span>
+            <span class="hour-marker">18</span>
+            <span class="hour-marker">19</span>
+            <span class="hour-marker">20</span>
+            <span class="hour-marker">21</span>
+            <span class="hour-marker">22</span>
+            <span class="hour-marker">23</span>
+            <span class="hour-marker">24</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="time-display" id="timeDisplay">00:00:00 / 24:00:00</div>
+    </div>
+
+    <script>
+        // Configuration
+        const TOTAL_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+        // Get start time from URL parameter or use current time
+        const urlParams = new URLSearchParams(window.location.search);
+        const startParam = urlParams.get('start');
+
+        let startTime;
+        if (startParam) {
+            startTime = parseInt(startParam);
+        } else {
+            // Store start time in localStorage so it persists on refresh
+            const storedStart = localStorage.getItem('nords24hStart');
+            if (storedStart) {
+                startTime = parseInt(storedStart);
+            } else {
+                startTime = Date.now();
+                localStorage.setItem('nords24hStart', startTime.toString());
+            }
+        }
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min((elapsed / TOTAL_DURATION_MS) * 100, 100);
+
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('timeDisplay').textContent = `${formatTime(elapsed)} / 24:00:00`;
+
+            if (progress < 100) {
+                requestAnimationFrame(updateProgress);
+            }
+        }
+
+        // Start the timer
+        updateProgress();
+
+        // Also update every second for smooth time display
+        setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            document.getElementById('timeDisplay').textContent = `${formatTime(elapsed)} / 24:00:00`;
+        }, 1000);
+    </script>
+</body>
+</html>
