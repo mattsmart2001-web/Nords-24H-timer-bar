@@ -59,7 +59,6 @@
             height: 100%;
             background: linear-gradient(90deg, #f5c518, #ffd700);
             width: 0%;
-            border-radius: 6px 0 0 6px;
             transition: width 1s linear;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
             position: relative;
@@ -76,7 +75,7 @@
             background: linear-gradient(
                 90deg,
                 transparent 0%,
-                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0.6) 50%,
                 transparent 100%
             );
             animation: sweep 3s ease-in-out infinite;
@@ -140,32 +139,8 @@
         // Configuration
         const TOTAL_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-        // Get start time from URL parameter or use current time
-        const urlParams = new URLSearchParams(window.location.search);
-        const startParam = urlParams.get('start');
-        const resetParam = urlParams.has('reset');
-
-        // Reset timer if ?reset is in the URL
-        if (resetParam) {
-            localStorage.removeItem('nords24hStart');
-            // Remove ?reset from URL so refresh doesn't keep resetting
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-
-        let startTime;
-        if (startParam) {
-            startTime = parseInt(startParam);
-            localStorage.setItem('nords24hStart', startTime.toString());
-        } else {
-            // Store start time in localStorage so it persists on refresh
-            const storedStart = localStorage.getItem('nords24hStart');
-            if (storedStart && !resetParam) {
-                startTime = parseInt(storedStart);
-            } else {
-                startTime = Date.now();
-                localStorage.setItem('nords24hStart', startTime.toString());
-            }
-        }
+        // Start time - resets on every refresh
+        const startTime = Date.now();
 
         function formatTime(ms) {
             const totalSeconds = Math.floor(ms / 1000);
