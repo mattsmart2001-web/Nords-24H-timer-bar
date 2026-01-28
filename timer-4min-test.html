@@ -69,7 +69,7 @@
                 rgba(255, 255, 255, 0.4) 50%,
                 transparent 100%
             );
-            animation: sweep 100s linear infinite;
+            animation: sweep 30s linear infinite;
             z-index: 1;
         }
 
@@ -81,6 +81,23 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
             position: relative;
             z-index: 2;
+            overflow: hidden;
+        }
+
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -30%;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.5) 50%,
+                transparent 100%
+            );
+            animation: sweepYellow 25s linear infinite;
         }
 
         .progress-fill::after {
@@ -95,6 +112,15 @@
         }
 
         @keyframes sweep {
+            0% {
+                left: -30%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes sweepYellow {
             0% {
                 left: -30%;
             }
